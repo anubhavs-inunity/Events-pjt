@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "950331805784",
+    "project_id": "events-pjt",
+    "storage_bucket": "events-pjt.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:950331805784:android:80a83c9ba453e39b8bfa2d",
+        "android_client_info": {
+          "package_name": "com.attendance.attendance_system"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwVe5GGbd0IULp3Tu1-eOi7gkSOleCOEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:950331805784:android:f3d9c7d8ac9ab3988bfa2d",
+        "android_client_info": {
+          "package_name": "com.event.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwVe5GGbd0IULp3Tu1-eOi7gkSOleCOEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
