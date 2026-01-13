@@ -17,7 +17,6 @@ import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import 'unified_login_page.dart';
 import 'student_messages_page.dart';
-import 'attendance_history_page.dart';
 import 'fullscreen_map_page.dart';
 
 class StudentDashboardPage extends StatefulWidget {
@@ -872,105 +871,6 @@ class _StudentDashboardPageState extends State<StudentDashboardPage> {
                               ),
                             ),
                           ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Attendance History Card
-                    Card(
-                      elevation: 3,
-                      shadowColor: theme.shadowColor.withOpacity(0.1),
-                      color: theme.cardColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AttendanceHistoryPage(
-                                  studentId: widget.studentId,
-                                  studentName: widget.studentName,
-                                ),
-                              ),
-                            );
-                          },
-                          borderRadius: BorderRadius.circular(16),
-                          child: Container(
-                            padding: const EdgeInsets.all(18.0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  theme.cardColor,
-                                  theme.cardColor.withOpacity(0.95),
-                                ],
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(14),
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        theme.colorScheme.primary.withOpacity(0.15),
-                                        theme.colorScheme.primary.withOpacity(0.08),
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: theme.colorScheme.primary.withOpacity(0.2),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Icon(
-                                    Icons.history,
-                                    color: theme.colorScheme.primary,
-                                    size: 26,
-                                  ),
-                                ),
-                                const SizedBox(width: 18),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'View Attendance History',
-                                        style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold,
-                                          color: theme.colorScheme.onSurface,
-                                          letterSpacing: 0.2,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        'Check your past attendance records',
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: theme.colorScheme.onSurface.withOpacity(0.6),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Icon(
-                                  Icons.chevron_right,
-                                  color: theme.colorScheme.onSurface.withOpacity(0.4),
-                                  size: 24,
-                                ),
-                              ],
-                            ),
-                          ),
                         ),
                       ),
                     ),

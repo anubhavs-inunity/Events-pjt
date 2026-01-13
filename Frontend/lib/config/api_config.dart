@@ -26,7 +26,8 @@ static const String baseUrl = 'http://192.168.0.166:8080';
   
   // Student management endpoints
   static String get addStudent => '$baseUrl/api/add-student';
-  static String getStudentAttendanceHistory(String studentId) => '$baseUrl/api/get-student-attendance-history?student_id=$studentId';
+  // Attendance history feature removed from student app – endpoint no longer used here
+  // static String getStudentAttendanceHistory(String studentId) => '$baseUrl/api/get-student-attendance-history?student_id=$studentId';
   
   // FCM endpoints
   static String get saveFcmToken => '$baseUrl/api/save-fcm-token';

@@ -401,11 +401,11 @@ class _StudentMessagesPageState extends State<StudentMessagesPage> {
               },
               tooltip: 'Select Messages',
             ),
-            IconButton(
-              icon: const Icon(Icons.refresh, color: Colors.white),
-              onPressed: () => _fetchMessages(),
-              tooltip: 'Refresh',
-            ),
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: () => _fetchMessages(),
+            tooltip: 'Refresh',
+          ),
           ],
         ],
       ),
@@ -464,7 +464,7 @@ class _StudentMessagesPageState extends State<StudentMessagesPage> {
 
                       final messageId = message['id'].toString();
                       final isSelected = _selectedMessageIds.contains(messageId);
-                      
+
                       return Card(
                         margin: const EdgeInsets.only(bottom: 12),
                         elevation: isRead ? 2 : 4,
@@ -482,10 +482,10 @@ class _StudentMessagesPageState extends State<StudentMessagesPage> {
                             if (_isSelectionMode) {
                               _toggleMessageSelection(messageId);
                             } else {
-                              if (!isRead) {
-                                _markAsRead(message['id']);
-                              }
-                              _showMessageDialog(message);
+                            if (!isRead) {
+                              _markAsRead(message['id']);
+                            }
+                            _showMessageDialog(message);
                             }
                           },
                           borderRadius: BorderRadius.circular(16),
@@ -586,8 +586,8 @@ class _StudentMessagesPageState extends State<StudentMessagesPage> {
                       );
                     },
                   ),
+                  ),
                 ),
-      ),
     );
   }
 

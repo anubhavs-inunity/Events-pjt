@@ -17,13 +17,13 @@ class MyApp extends StatelessWidget {
       create: (_) => ThemeProvider(),
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
-          return MaterialApp(
-            title: 'Location-Based Attendance System',
+    return MaterialApp(
+      title: 'Location-Based Attendance System',
             theme: themeProvider.lightTheme,
             darkTheme: themeProvider.darkTheme,
             themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-            home: const UnifiedLoginPage(),
-            debugShowCheckedModeBanner: false,
+      home: const UnifiedLoginPage(),
+      debugShowCheckedModeBanner: false,
           );
         },
       ),

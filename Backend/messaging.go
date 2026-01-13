@@ -63,16 +63,16 @@ func saveFCMTokenHandler(w http.ResponseWriter, r *http.Request) {
 		// Check if token exists
 		checkURL := fmt.Sprintf("%s/rest/v1/fcm_tokens?user_id=eq.%s&user_type=eq.%s&fcm_token=eq.%s&select=id",
 			config.SupabaseURL, data.UserID, data.UserType, data.FCMToken)
-
+		
 		req, _ := http.NewRequest("GET", checkURL, nil)
 		req.Header.Set("apikey", config.SupabaseAnonKey)
 		req.Header.Set("Authorization", "Bearer "+config.SupabaseAnonKey)
-
+		
 		resp, err := http.DefaultClient.Do(req)
 		if err == nil {
 			defer resp.Body.Close()
 			body, _ := io.ReadAll(resp.Body)
-
+			
 			// If token doesn't exist, insert it
 			if resp.StatusCode == http.StatusOK && len(body) <= 2 { // Empty array
 				tokenData := map[string]interface{}{
@@ -81,7 +81,7 @@ func saveFCMTokenHandler(w http.ResponseWriter, r *http.Request) {
 					"fcm_token":   data.FCMToken,
 					"device_type": data.DeviceType,
 				}
-
+				
 				jsonData, _ := json.Marshal(tokenData)
 				insertURL := fmt.Sprintf("%s/rest/v1/fcm_tokens", config.SupabaseURL)
 				insertReq, _ := http.NewRequest("POST", insertURL, bytes.NewBuffer(jsonData))
@@ -89,7 +89,7 @@ func saveFCMTokenHandler(w http.ResponseWriter, r *http.Request) {
 				insertReq.Header.Set("Authorization", "Bearer "+config.SupabaseAnonKey)
 				insertReq.Header.Set("Content-Type", "application/json")
 				insertReq.Header.Set("Prefer", "resolution=merge-duplicates")
-
+				
 				http.DefaultClient.Do(insertReq) // Fire and forget
 			} else {
 				// Update existing token
@@ -104,7 +104,7 @@ func saveFCMTokenHandler(w http.ResponseWriter, r *http.Request) {
 				updateReq.Header.Set("apikey", config.SupabaseAnonKey)
 				updateReq.Header.Set("Authorization", "Bearer "+config.SupabaseAnonKey)
 				updateReq.Header.Set("Content-Type", "application/json")
-
+				
 				http.DefaultClient.Do(updateReq) // Fire and forget
 			}
 		}
@@ -143,17 +143,17 @@ func sendBroadcastMessageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("DEBUG: Received broadcast message request - AdminID: %s, Title: %s, SendToAll: %v, GroupID: %s\n",
+	fmt.Printf("DEBUG: Received broadcast message request - AdminID: %s, Title: %s, SendToAll: %v, GroupID: %s\n", 
 		data.AdminID, data.Title, data.SendToAll, data.GroupID)
 
 	// Validate required fields
 	if data.AdminID == "" || data.Title == "" || data.Message == "" {
-		fmt.Printf("❌ ERROR: Missing required fields - AdminID: %s, Title: %s, Message length: %d\n",
+		fmt.Printf("❌ ERROR: Missing required fields - AdminID: %s, Title: %s, Message length: %d\n", 
 			data.AdminID, data.Title, len(data.Message))
 		http.Error(w, "Missing required fields: admin_id, title, message", http.StatusBadRequest)
 		return
 	}
-
+	
 	// Validate admin_id exists in database
 	adminURL := fmt.Sprintf("%s/rest/v1/admins?id=eq.%s&select=id", config.SupabaseURL, data.AdminID)
 	adminReq, _ := http.NewRequest("GET", adminURL, nil)
@@ -284,7 +284,7 @@ func sendBroadcastMessageHandler(w http.ResponseWriter, r *http.Request) {
 					messageID = createdMsgs[0].ID
 				}
 			}
-
+			
 			if messageID != "" {
 				fmt.Printf("✅ DEBUG: Created broadcast message with ID: %s\n", messageID)
 			} else {
@@ -299,7 +299,7 @@ func sendBroadcastMessageHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("❌ ERROR: Message ID is empty, cannot create recipients. Check message creation above.\n")
 	} else {
 		fmt.Printf("✅ DEBUG: Creating recipients for message %s, %d students\n", messageID, len(studentUUIDs))
-
+		
 		// Batch insert recipients (more efficient)
 		if len(studentUUIDs) > 0 {
 			recipientsData := make([]map[string]interface{}, 0, len(studentUUIDs))
@@ -309,7 +309,7 @@ func sendBroadcastMessageHandler(w http.ResponseWriter, r *http.Request) {
 					"student_id": studentUUID,
 				})
 			}
-
+			
 			recipientJson, _ := json.Marshal(recipientsData)
 			recipientURL := fmt.Sprintf("%s/rest/v1/message_recipients", config.SupabaseURL)
 			recipientReq, _ := http.NewRequest("POST", recipientURL, bytes.NewBuffer(recipientJson))
@@ -317,7 +317,7 @@ func sendBroadcastMessageHandler(w http.ResponseWriter, r *http.Request) {
 			recipientReq.Header.Set("Authorization", "Bearer "+config.SupabaseAnonKey)
 			recipientReq.Header.Set("Content-Type", "application/json")
 			recipientReq.Header.Set("Prefer", "resolution=merge-duplicates")
-
+			
 			fmt.Printf("DEBUG: Sending batch recipient creation request for %d recipients\n", len(recipientsData))
 			resp, err := http.DefaultClient.Do(recipientReq)
 			if err != nil {
@@ -386,7 +386,7 @@ func getMessagesHandler(w http.ResponseWriter, r *http.Request) {
 	// First get message recipients
 	url := fmt.Sprintf("%s/rest/v1/message_recipients?student_id=eq.%s&select=message_id,is_read",
 		config.SupabaseURL, studentUUID)
-
+	
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Set("apikey", config.SupabaseAnonKey)
 	req.Header.Set("Authorization", "Bearer "+config.SupabaseAnonKey)
@@ -454,9 +454,9 @@ func getMessagesHandler(w http.ResponseWriter, r *http.Request) {
 	msgIDsParam := strings.Join(messageIDs, ",")
 	msgURL := fmt.Sprintf("%s/rest/v1/broadcast_messages?id=in.(%s)&select=id,title,message,created_at,admin_id,admins(username)&order=created_at.desc",
 		config.SupabaseURL, msgIDsParam)
-
+	
 	fmt.Printf("DEBUG: Querying messages with URL: %s\n", msgURL)
-
+	
 	msgReq, _ := http.NewRequest("GET", msgURL, nil)
 	msgReq.Header.Set("apikey", config.SupabaseAnonKey)
 	msgReq.Header.Set("Authorization", "Bearer "+config.SupabaseAnonKey)

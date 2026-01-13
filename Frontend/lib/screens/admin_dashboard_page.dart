@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:async';
+import 'dart:io';
 import '../config/api_config.dart';
 import '../widgets/custom_loader.dart';
 import '../widgets/student_card.dart';
@@ -22,8 +23,7 @@ import 'view_student_locations_page.dart';
 import 'fullscreen_map_page.dart';
 import 'broadcast_message_page.dart';
 import 'add_student_page.dart';
-// import 'package:path_provider/path_provider.dart';
-// import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   final String? adminId;
@@ -586,55 +586,81 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         // Create filename with timestamp
         final timestamp = DateTime.now().toIso8601String().replaceAll(':', '-').split('.')[0];
         final filename = '${_sessionName}_$timestamp.csv';
-        
-        // Show dialog with CSV content that user can copy
-        if (mounted) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('CSV Data Downloaded'),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'File: $filename',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'CSV Content (tap to copy):',
-                      style: TextStyle(fontSize: 12, color: Color(0xFF757575)),
-                    ),
-                    const SizedBox(height: 8),
-                    SelectableText(
-                      csvContent,
-                      style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Note: For file download, please rebuild the app after installing path_provider plugin.',
-                      style: TextStyle(fontSize: 11, color: Color(0xFF757575), fontStyle: FontStyle.italic),
-                    ),
-                  ],
+
+        // Save to device storage (Downloads if available, else app documents)
+        if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+          try {
+            Directory? targetDir;
+            if (Platform.isAndroid) {
+              final dirs = await getExternalStorageDirectories(type: StorageDirectory.downloads);
+              if (dirs != null && dirs.isNotEmpty) {
+                targetDir = dirs.first;
+              }
+            }
+            targetDir ??= await getApplicationDocumentsDirectory();
+
+            final filePath = '${targetDir.path}/$filename';
+            final file = File(filePath);
+            await file.writeAsString(csvContent);
+
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('CSV saved to $filePath'),
+                  backgroundColor: const Color(0xFF4CAF50),
+                  duration: const Duration(seconds: 4),
                 ),
+              );
+            }
+          } catch (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Saved CSV content to clipboard view (file write failed: $e)'),
+                  backgroundColor: const Color(0xFFF44336),
+                  duration: const Duration(seconds: 5),
+                ),
+              );
+            }
+          }
+        } else {
+          // Web / desktop fallback: show dialog for copy
+          if (mounted) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('CSV Data Downloaded'),
+                content: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'File: $filename',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'CSV Content (tap to copy):',
+                        style: TextStyle(fontSize: 12, color: Color(0xFF757575)),
+                      ),
+                      const SizedBox(height: 8),
+                      SelectableText(
+                        csvContent,
+                        style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Close'),
+                  ),
+                ],
               ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Close'),
-                ),
-              ],
-            ),
-          );
-          
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('CSV data retrieved successfully!'),
-              backgroundColor: Color(0xFF4CAF50),
-            ),
-          );
+            );
+          }
         }
       } else {
         final data = json.decode(response.body);

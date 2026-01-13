@@ -66,7 +66,7 @@ dependencies:
   
   # Storage for FCM tokens
   shared_preferences: ^2.2.2
-  
+
   # State management for theme
   provider: ^6.1.1
 

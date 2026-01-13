@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../config/api_config.dart';
 import '../widgets/custom_loader.dart';
-import '../services/fcm_service.dart';
 import 'admin_dashboard_page.dart';
 import 'student_dashboard_page.dart';
 
@@ -503,7 +502,8 @@ class _UnifiedLoginPageState extends State<UnifiedLoginPage>
           label: 'Roll Number',
           hint: 'Enter your roll number',
           icon: Icons.badge,
-          keyboardType: TextInputType.number,
+          keyboardType: TextInputType.text,
+          textCapitalization: TextCapitalization.characters,
           validator: (value) {
             if (value == null || value.trim().isEmpty) {
               return 'Please enter your roll number';
@@ -547,12 +547,14 @@ class _UnifiedLoginPageState extends State<UnifiedLoginPage>
     required IconData icon,
     String? Function(String?)? validator,
     TextInputType? keyboardType,
+    TextCapitalization textCapitalization = TextCapitalization.none,
     TextInputAction? textInputAction,
     void Function(String)? onFieldSubmitted,
   }) {
     return TextFormField(
       controller: controller,
       focusNode: focusNode,
+      textCapitalization: textCapitalization,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
       onFieldSubmitted: onFieldSubmitted,
